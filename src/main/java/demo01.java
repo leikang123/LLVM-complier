@@ -9,11 +9,14 @@ import java.io.IOException;
  */
 public class SimpleLexer {
     public static void main(String args[]) {
+
         SimpleLexer lexer = new SimpleLexer();
 
         String script = "int age = 45;";
+        // 打印的是字符串int age = 45
         System.out.println("parse :" + script);
         SimpleTokenReader tokenReader = lexer.tokenize(script);
+        // dump()方法
         dump(tokenReader);
 
         //测试inta的解析
@@ -239,106 +242,9 @@ public class SimpleLexer {
         return new SimpleTokenReader(tokens);
     }
 
-    /**
-     * Token的一个简单实现。只有类型和文本值两个属性。
-     */
-    private final class SimpleToken implements Token {
-        //Token类型
-        private TokenType type = null;
-
-        //文本值
-        private String text = null;
 
 
-        @Override
-        public TokenType getType() {
-            return type;
-        }
 
-        @Override
-        public String getText() {
-            return text;
-        }
-    }
-
-    /**
-     * 打印所有的Token
-     * @param tokenReader
-     */
-    public static void dump(SimpleTokenReader tokenReader){
-        System.out.println("text\ttype");
-        Token token = null;
-        while ((token= tokenReader.read())!=null){
-            System.out.println(token.getText()+"\t\t"+token.getType());
-        }
-    }
-
-    /**
-     * 有限状态机的各种状态。
-     */
-    private enum DfaState {
-        Initial,
-
-        If, Id_if1, Id_if2, Else, Id_else1, Id_else2, Id_else3, Id_else4, Int, Id_int1, Id_int2, Id_int3, Id, GT, GE,
-
-        Assignment,
-
-        Plus, Minus, Star, Slash,
-
-        SemiColon,
-        LeftParen,
-        RightParen,
-
-        IntLiteral
-    }
-
-    /**
-     * 一个简单的Token流。是把一个Token列表进行了封装。
-     */
-    private class SimpleTokenReader implements TokenReader {
-        List<Token> tokens = null;
-        int pos = 0;
-
-        public SimpleTokenReader(List<Token> tokens) {
-            this.tokens = tokens;
-        }
-
-        @Override
-        public Token read() {
-            if (pos < tokens.size()) {
-                return tokens.get(pos++);
-            }
-            return null;
-        }
-
-        @Override
-        public Token peek() {
-            if (pos < tokens.size()) {
-                return tokens.get(pos);
-            }
-            return null;
-        }
-
-        @Override
-        public void unread() {
-            if (pos > 0) {
-                pos--;
-            }
-        }
-
-        @Override
-        public int getPosition() {
-            return pos;
-        }
-
-        @Override
-        public void setPosition(int position) {
-            if (position >=0 && position < tokens.size()){
-                pos = position;
-            }
-        }
-
-    }
 
 
 }
