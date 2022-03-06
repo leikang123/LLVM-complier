@@ -1,34 +1,35 @@
 #include <iostream>
 #include <stdio.h>
 #define MAX 100
-#define MaxVtNum 20
-#define MaxVnNum 20
-#define MaxPlength 20
+#define MaxVtNum 20  /*终结符最大的数目*/
+#define MaxVnNum 20  /*非终结符最大的数目*/
+#define MaxPlength 20  /*产生式最大的长度*/
 using namespace std;
+/*结构体*/
 struct product
 {
-    int length;
-    char left;
-    char right[MaxPlength];
+    int length;  /*产生式右部形式文法符号的长度*/
+    char left;  /*产生式左部形式文法符号的长度*/
+    char right[MaxPlength]; /*产生式右部的文法符号串*/
 
-}p[100];
+}p[100];  
 struct set    /*产生结构体*/
 {
-    int n;
-    char elm[100];
+    int n;  /*first和follow集的元素个数*/
+    char elm[100];  
 }first[MAX],follow[MAX];
-char termin[MaxVtNum];
-char non_termin[MaxVnNum];
-int n;
-int VtNum;
+char termin[MaxVtNum];  /*终结符*/
+char non_termin[MaxVnNum];  /*非终结符*/
+int n;  /*产生式数量*/
+int VtNum;  /*终结符数量*/
 int VnNum;  /*非终结符数量*/
-inline bool isterminal(char x)
+inline bool isterminal(char x)  /*判断是否为终结符*/
 {
     if(x>='A' && x<='Z')
        return false;
        return true;
 }
-bool exist(char x)
+bool exist(char x)  /*判断x是否是出现过*/
 {
     int i;
     if(isterminal(x))
@@ -43,7 +44,7 @@ bool exist(char x)
        return true;
        return false;
 }
-void read()
+void read() /*读入文法*/
 {
     int i,j,k;
     char tmp[25];
@@ -70,7 +71,7 @@ void read()
     }
     termin[++VtNum] = non_termin[++VnNUm] ='#';
 }
-void show()
+void show() /*输出用户所输入的文法*/
 {
     int i;
     printf("用户所输入的产生式为:\n");
@@ -101,19 +102,19 @@ bool in (struct set,char id)
          return true;
         return false;
 }
-void add(struct set &st,char e)
+void add(struct set &st,char e) /*符号e添加到集合st里面*/
 {
     st.n++;
     st.elm[st.n]=e;
 }
-void compute_first()
+void compute_first()    /*求first集合*/
 {
     int i,j,k,idl,idr;
     bool inc;
     while(inc)
     {
         inc = false;
-        for(i=1;i<=n;i++)
+        for(i=1;i<=n;i++)   /*遍历所有产生式*/
         {
             idl = char_id(p[i].left)
             for(j=0;p[i].right[j];j++)
@@ -151,7 +152,7 @@ void compute_first()
         }
     }
 }
-void printf_first(struct set *st)
+void printf_first(struct set *st)   /*输出每个非终结符的first集合*/
 {
     int i,j;
     puts("\n");
@@ -163,11 +164,76 @@ void printf_first(struct set *st)
            puts("");
     }
 }
-int main()
+void compute_follow()
+{
+    int i,j,k,idl,idr,idf;
+    bool flag,inc=true;
+    add(follow[1].'#'); /*把结束标志#加入开始符号的FOLLOW集合*/
+    while(inc)
+    {
+        inc=false;
+        for(i=1;i<=n;i++)
+        {
+            idl=char_id(p[i].left);
+            for(flag=true,j=p[i].length;j>=0;j--)
+            {
+                idr = char_id(p[i].right[j]);
+                if(idr>1000)
+                {
+                    flag =false;
+                    continue;
+                }
+                if(flag)
+                {
+                    for(k=1;k<=follow[id].n;k++)
+                    {
+                        if(!in(follow[idr],follow[idl].elm[k]))
+                        {
+                            add(follow[idr],follow[isl].elm[k]);
+                            inc=true;
+                        }
+                    }
+                }
+                if(j<p[i].length)
+                  idf=cid(p[i].right[j+1]);
+                  else continue;
+                  if(idf>1000)
+                  {
+                      if(!in(follow[idr],p[i].right[j+1]))
+                      add(follow[idr],p[i].right[j+1]);
+                      continue;
+                  }
+                  for(k=1;k<=first[idf].n;k++)
+                  {
+                      if(!in(follow[idr],first[idf].elm[k])&& first[idf].elm([k]!='-'))
+                      {
+                          add(follow[idr],first[idf].elm[k]);
+                          inc=true;
+                      }
+                  }
+            }
+        }
+    }
+}
+void print_follow(struct set *st)
+{
+    int i,j;
+    puts("\n");
+    for(i=1;i<=VnNum;i++)
+    {
+        printf("%s(%c):  ",FOLLOW,non_termin[i]);
+        for(j=1,j<=st[i].n;j++)
+          printf("%c ".st[i].elm[j]);
+          puts("");
+    }
+}
+int main() /*主函数*/
 {
     read();
     show();
     compute_first();
     print_first(first);
+    compute_follow();
+    print_follow(follow);
     return 0;
 }
